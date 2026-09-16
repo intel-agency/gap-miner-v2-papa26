@@ -10,7 +10,7 @@ It has:
 - the scripts we use to perform the clone
 
 1. the script: `https://github.com/nam20485/workflow-launch2/blob/main/scripts/create-repo-from-slug.ps1`
-   - invoked like so:  `./scripts/create-repo-from-slug.ps1 -Slug "gap-miner-v2" -TemplateRepoName "agent-context" -TriggerProjectSetup $False -Yes`
+   - invoked like so:  `./scripts/create-repo-from-slug.ps1 -Slug "gap-miner-v2" -TemplateRepoName "gap-miner-v2-papa26" -TriggerProjectSetup $False -Yes`
 
 Note the step that performs rewriting in the @AGENTS.md file (literally this file's counterpart in the post-cloned repo instance)
 

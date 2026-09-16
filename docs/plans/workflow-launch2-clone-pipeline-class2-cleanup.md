@@ -4,7 +4,7 @@
 | --- | --- |
 | **Plan** | Add Class-2 cleanup + `/gh-issue-tracking-init` hierarchy dispatch to the clone pipeline in `nam20485/workflow-launch2`, without changing or breaking the existing `project-setup` / `orchestrate-dynamic-workflow` orchestration path that other templates still rely on |
 | **Target repo** | `nam20485/workflow-launch2` (the external clone-creation launcher) |
-| **Template repo** | `intel-agency/agent-context` (consumer of the new path) |
+| **Template repo** | `intel-agency/gap-miner-v2-papa26` (consumer of the new path) |
 | **Status** | Active |
 | **Date** | 2026-07-20 |
 | **Related** | [`docs/plans/.deferred/template-content-strategy.md`](.deferred/template-content-strategy.md) (W1 post-clone reset strategy); [`docs/plans/upstream-handoff-identity-and-phase-warning.md`](upstream-handoff-identity-and-phase-warning.md) (handoff from downstream run); [`create-repo-with-plan-docs.ps1`](https://github.com/nam20485/workflow-launch2/blob/main/scripts/create-repo-with-plan-docs.ps1); [`trigger-project-setup.ps1`](https://github.com/nam20485/workflow-launch2/blob/main/scripts/trigger-project-setup.ps1); [`create-dispatch-issue.ps1`](https://github.com/nam20485/workflow-launch2/blob/main/scripts/create-dispatch-issue.ps1) |
@@ -13,7 +13,7 @@
 
 ## Context
 
-When `agent-context` is used as a GitHub template, the existing
+When `gap-miner-v2-papa26` is used as a GitHub template, the existing
 `create-repo-with-plan-docs.ps1` pipeline clones the template, seeds `plan_docs/`,
 substitutes placeholder names/owners, rewrites the AGENTS.md identity label, and
 commits everything to a new downstream instance. The pipeline's final trigger
@@ -21,7 +21,7 @@ step (`trigger-project-setup.ps1`) dispatches an orchestration workflow that is
 **still required** by other templates using the legacy
 `/orchestrate-dynamic-workflow $workflow_name = project-setup` flow.
 
-For `agent-context`-seeded instances, that dispatch body is incompatible: the
+For `gap-miner-v2-papa26`-seeded instances, that dispatch body is incompatible: the
 correct follow-up is to invoke the `gh-issue-tracking-init` skill directly
 against the freshly seeded `plan_docs/`, and we also want a Class-2 cleanup step
 (memory reset, template plans cleared, foreign artifacts removed) before the
@@ -51,8 +51,8 @@ seed commit.
 | Handoff § | Issue | Status |
 | --- | --- | --- |
 | §1 | AGENTS.md identity mislabels clones as "upstream template" | **Resolved (template-side, symptom-fix).** The uncommitted change to `AGENTS.md` first paragraph (W1.4 option a in the strategy doc's analysis) reworded `**upstream GitHub template**` → `**GitHub template repo**` with a context-neutral apposition, so the existing `create-repo-with-plan-docs.ps1` anchor `**GitHub template repo**` → `**project instance** cloned from … GitHub template` now matches. Future work (explicitly out of scope for this plan): upstream handoff §1 also suggested runtime role detection (`gh repo view --json isTemplate -q .isTemplate`) — that would make the role label derive at read-time rather than from a single-shot label rewrite, and is architecturally better; deferred. |
-| §1 reconcile | Which repo is the true canonical template | **Resolved.** `intel-agency/agent-context` is the canonical template (declared in `AGENTS.md:5` and in `docs/plans/.deferred/template-content-strategy.md`). The india89 plan docs that reference it as `TemplateRepoName` are a downstream-specific artifact that landed via the same Class-2 contamination W1 is fixing; W1.2 (clear template plans) removes them from future clones. |
-| §2 | `set-project-fields.ps1` emits spurious `Phase` warning on every call | **Needs fix in this repo (agent-context), NOT in workflow-launch2.** Root cause confirmed at `.agents/skills/gh-issue-tracking-init/scripts/set-project-fields.ps1:95` — uses `if ($null -ne $Phase)` but unbound `[string]` parameters in PowerShell are `""` (empty), not `$null`, so the guard always passes. Same latent flaw affects `$Level`, `$Priority`, `$Status`. Already correctly handled for `$Estimate` at line 97 using `$PSBoundParameters.ContainsKey('Estimate')`. Fix: apply the same `ContainsKey` guard to all four single-select fields. Not covered by the uncommitted changes. Included in this plan as a parallel work item (§B below) since it's a one-file template-repo patch. |
+| §1 reconcile | Which repo is the true canonical template | **Resolved.** `intel-agency/gap-miner-v2-papa26` is the canonical template (declared in `AGENTS.md:5` and in `docs/plans/.deferred/template-content-strategy.md`). The india89 plan docs that reference it as `TemplateRepoName` are a downstream-specific artifact that landed via the same Class-2 contamination W1 is fixing; W1.2 (clear template plans) removes them from future clones. |
+| §2 | `set-project-fields.ps1` emits spurious `Phase` warning on every call | **Needs fix in this repo (gap-miner-v2-papa26), NOT in workflow-launch2.** Root cause confirmed at `.agents/skills/gh-issue-tracking-init/scripts/set-project-fields.ps1:95` — uses `if ($null -ne $Phase)` but unbound `[string]` parameters in PowerShell are `""` (empty), not `$null`, so the guard always passes. Same latent flaw affects `$Level`, `$Priority`, `$Status`. Already correctly handled for `$Estimate` at line 97 using `$PSBoundParameters.ContainsKey('Estimate')`. Fix: apply the same `ContainsKey` guard to all four single-select fields. Not covered by the uncommitted changes. Included in this plan as a parallel work item (§B below) since it's a one-file template-repo patch. |
 
 ## Work items
 
@@ -70,7 +70,7 @@ replace but BEFORE `Copy-PlanDocs`. Runs idempotently:
 
 ```pwsh
 .SYNOPSIS
-    Remove Class-2 template state from a freshly cloned agent-context instance.
+    Remove Class-2 template state from a freshly cloned gap-miner-v2-papa26 instance.
 
 .DESCRIPTION
     Deletes the template's `.agents/memory.md` and emits a minimal blank skeleton
@@ -116,7 +116,7 @@ from `trigger-project-setup.ps1` or copied into a small shared
 
 ```pwsh
 .SYNOPSIS
-    Trigger `/gh-issue-tracking-init` on a freshly seeded agent-context clone.
+    Trigger `/gh-issue-tracking-init` on a freshly seeded gap-miner-v2-papa26 clone.
 
 .DESCRIPTION
     Creates an `orchestration:dispatch`-labeled issue on the target repo whose
@@ -147,7 +147,7 @@ Behavioral contract:
   `Ensure-DispatchBootstrapLabel` so the orchestrator that matches the label
   picks up the issue.
 
-#### §A.3 — `create-repo-agent-context.ps1` (new orchestrator)
+#### §A.3 — `create-repo-gap-miner-v2-papa26.ps1` (new orchestrator)
 
 A thin wrapper that runs the existing `create-repo-with-plan-docs.ps1` with
 `-SkipProjectSetup` (suppressing the legacy trigger), then invokes
@@ -157,21 +157,21 @@ untouched.
 
 ```pwsh
 .SYNOPSIS
-    Create a new `agent-context`-seeded repo with Class-2 cleanup and
+    Create a new `gap-miner-v2-papa26`-seeded repo with Class-2 cleanup and
     `/gh-issue-tracking-init` hierarchy dispatch.
 
 .DESCRIPTION
     Thin wrapper over create-repo-with-plan-docs.ps1 + cleanup-template-state.ps1
     + trigger-gh-issue-tracking-init.ps1. Accepts the same core parameters as
     create-repo-from-slug.ps1 (Slug, Owner, Visibility, Count, Yes, LaunchAgent)
-    plus the agent-context-specific ones (-TriggerHierarchyInit, default $true).
+    plus the gap-miner-v2-papa26-specific ones (-TriggerHierarchyInit, default $true).
     The legacy project-setup dispatch is never fired by this wrapper.
 ```
 
 Behavioral contract:
 
 - Accepts `$Slug`, `$Owner`, `$Visibility`, `$Count`, `$Yes`, `$LaunchAgent`.
-- Hard-codes `$TemplateRepoName = 'agent-context'` and
+- Hard-codes `$TemplateRepoName = 'gap-miner-v2-papa26'` and
   `$TemplateOwner = 'intel-agency'` (the canonical template identity).
 - Hard-codes `$PlanDocsDir = "./plan_docs/$Slug"` (launcher convention).
 - Hard-codes `$CloneParentDir = '../dynamic_workflows'`.
@@ -196,7 +196,7 @@ and gate the existing trigger block (`lines 403-423`) on `if ($TriggerProjectSet
 
 #### §A.5 — Pester coverage
 
-Add a new test file `scripts/create-repo-agent-context.Tests.ps1` covering:
+Add a new test file `scripts/create-repo-gap-miner-v2-papa26.Tests.ps1` covering:
 
 - `cleanup-template-state.ps1` on a synthetic clone fixture:
   - `.agents/memory.md` is reset to the skeleton shape.
@@ -207,16 +207,16 @@ Add a new test file `scripts/create-repo-agent-context.Tests.ps1` covering:
 - `trigger-gh-issue-tracking-init.ps1`:
   - Dispatch issue body is exactly `/gh-issue-tracking-init`.
   - `orchestration:dispatch` label is bootstrapped before issue creation.
-- `create-repo-agent-context.ps1`:
+- `create-repo-gap-miner-v2-papa26.ps1`:
   - Calls `create-repo-with-plan-docs.ps1` with `-SkipProjectSetup`.
   - Calls cleanup before `trigger-gh-issue-tracking-init.ps1`.
 
 The existing `TestTriggerProjectSetup.ps1` and any tests exercising
 `trigger-project-setup.ps1` remain untouched.
 
-### §B — agent-context template changes (set-project-fields Phase guard)
+### §B — gap-miner-v2-papa26 template changes (set-project-fields Phase guard)
 
-Single-file patch in this repo (agent-context), independent of §A:
+Single-file patch in this repo (gap-miner-v2-papa26), independent of §A:
 
 **File:** `.agents/skills/gh-issue-tracking-init/scripts/set-project-fields.ps1`
 **Lines:** 92–96
@@ -248,13 +248,13 @@ Existing test suite remains green.
 **Step 1.** Implement §A.4 (optional switch) and §A.1–§A.3 (new scripts) in
 `workflow-launch2`, with §A.5 Pester coverage.
 
-**Step 2.** Implement §B in `agent-context` (one-file patch + Pester case).
+**Step 2.** Implement §B in `gap-miner-v2-papa26` (one-file patch + Pester case).
 
 **Step 3.** Verify end-to-end by picking an existing slug (e.g. `gap-miner-v2`)
 and invoking the new orchestrator:
 
 ```pwsh
-./scripts/create-repo-agent-context.ps1 `
+./scripts/create-repo-gap-miner-v2-papa26.ps1 `
     -Slug "gap-miner-v2" -TriggerHierarchyInit $true -Yes
 ```
 
@@ -266,7 +266,7 @@ Then, against the created throwaway clone, assert:
 - `docs/plans/.completed/run-issues-review/` is gone.
 - `AGENTS.md:5` in the template still reads "…**GitHub template repo**…"; in the
   clone it reads "…**project instance** cloned from the
-  `intel-agency/agent-context` GitHub template…" (end-to-end confirmation of
+  `intel-agency/gap-miner-v2-papa26` GitHub template…" (end-to-end confirmation of
   W1.4's fix).
 - A dispatch issue exists on the new repo with body
   `/gh-issue-tracking-init` (not `/orchestrate-dynamic-workflow`).
@@ -306,7 +306,7 @@ dispatch issue is still created on the new repo (regression check —
 
 - `npx --no-install markdownlint-cli2` clean on this file.
 - §A.5 Pester suite green in `workflow-launch2`.
-- §B Pester case green in `agent-context`; existing skill tests stay green.
+- §B Pester case green in `gap-miner-v2-papa26`; existing skill tests stay green.
 - End-to-end §3 verification against a throwaway clone.
 - End-to-end §4 legacy-path regression against a legacy-template slug.
 
@@ -314,10 +314,10 @@ dispatch issue is still created on the new repo (regression check —
 
 - **Backward compatibility preserved:** running the legacy entry point
   (`create-repo-from-slug.ps1` without `-SkipProjectSetup` and with a
-  non-agent-context template) produces the exact same dispatch issue body
+  non-gap-miner-v2-papa26 template) produces the exact same dispatch issue body
   (`/orchestrate-dynamic-workflow $workflow_name = project-setup`) as today.
-- **agent-context clones are clean:** a clone created via
-  `create-repo-agent-context.ps1` has blank memory, no template plans, no
+- **gap-miner-v2-papa26 clones are clean:** a clone created via
+  `create-repo-gap-miner-v2-papa26.ps1` has blank memory, no template plans, no
   `run-issues-review/`, a correctly-rewritten AGENTS.md first paragraph, and a
   `/gh-issue-tracking-init` dispatch issue (not the legacy project-setup one).
 - **Phase warning silenced:** `set-project-fields.ps1` invoked without `-Phase`

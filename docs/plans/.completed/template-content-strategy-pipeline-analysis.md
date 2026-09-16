@@ -26,7 +26,7 @@ cloning pipeline already does. I examined:
      currently calls `trigger-project-setup.ps1`, which dispatches
      `/orchestrate-dynamic-workflow $workflow_name = project-setup` — an
      orchestrator workflow ported from a prior template that is largely
-     incompatible with `agent-context`'s new structure. The user passes
+     incompatible with `gap-miner-v2-papa26`'s new structure. The user passes
      `-TriggerProjectSetup $False` to bypass it entirely. **Needs replacement:**
      the trigger should invoke `/gh-issue-tracking-init` directly (no args — its
      defaults resolve to the current repo + seeded `plan_docs/`, exactly the
@@ -48,7 +48,7 @@ cloning pipeline already does. I examined:
    rewrite to silently skip ("skipped (already updated)"). Result: the cloned
    instance's AGENTS.md still declares "*this repository … is the upstream GitHub
    template*" — semantically wrong for a downstream instance. Generic name
-   replacement did land (`intel-agency/agent-context` → the clone name), but the
+   replacement did land (`intel-agency/gap-miner-v2-papa26` → the clone name), but the
    role label was not flipped.
 
 4. **Where the reset should live (resolved).** The open question in the strategy
@@ -102,7 +102,7 @@ matters: delete first, then replace):
 - **W1.5 (BROKEN — needs replacement):** `-TriggerProjectSetup $True` currently
     dispatches `/orchestrate-dynamic-workflow $workflow_name = project-setup` via
     `trigger-project-setup.ps1`. This orchestrator was ported from a prior
-    template and is incompatible with `agent-context`'s new structure (the user
+    template and is incompatible with `gap-miner-v2-papa26`'s new structure (the user
     already bypasses it with `-TriggerProjectSetup $False`). Replace the trigger
     body so it creates a dispatch issue invoking `/gh-issue-tracking-init`
     directly (no args — its defaults resolve to the current repo + seeded
@@ -117,7 +117,7 @@ the AGENTS.md rewrite anchor:
     appears in the template AGENTS.md, or (more durable) anchor on the full first
     paragraph and rewrite it with clone-aware wording.
 
-**In this template repo (`intel-agency/agent-context`):**
+**In this template repo (`intel-agency/gap-miner-v2-papa26`):**
 
 - Update `docs/plans/.deferred/template-content-strategy.md` with the new
     *Cloning pipeline capabilities* and revised *Current state* sections (text
@@ -233,7 +233,7 @@ Typical invocation:
 
 ```pwsh
 ./scripts/create-repo-from-slug.ps1 `
-  -Slug "gap-miner-v2" -TemplateRepoName "agent-context" `
+  -Slug "gap-miner-v2" -TemplateRepoName "gap-miner-v2-papa26" `
   -TriggerProjectSetup $False -Yes
 ```
 
@@ -241,7 +241,7 @@ Typical invocation:
 
 | Step | Description |
 | --- | --- |
-| Create repo | `gh repo create --template intel-agency/agent-context` |
+| Create repo | `gh repo create --template intel-agency/gap-miner-v2-papa26` |
 | Poll readiness | `Wait-TemplateReady` polls commits endpoint until the template initial commit lands |
 | Provision secrets/vars | `GEMINI_API_KEY` (from env), `VERSION_PREFIX='0.0.1'` |
 | Clone locally | `git clone` to `../dynamic_workflows/<full-repo-name>` |
@@ -249,7 +249,7 @@ Typical invocation:
 | **Name placeholder replace** | `Update-TemplatePlaceholders` replaces every occurrence of the template repo name and owner in file contents *and* filenames; asserts zero remaining matches |
 | **AGENTS.md semantic rewrite** | Targets `**GitHub template repo**` and replaces with `**project instance** cloned from ... template` (**see bug noted under W1 — anchor literal currently mismatches**) |
 | Commit + push | Single seed commit; handles template-race rebase by re-running all of the above after `pull --rebase` |
-| **Trigger follow-up workflow (W1.5) — BROKEN** | When `-TriggerProjectSetup $True` (default), the script calls `trigger-project-setup.ps1` which creates an `orchestration:dispatch` issue invoking `/orchestrate-dynamic-workflow $workflow_name = project-setup`. **Problem:** this orchestrator was ported from a different template and is largely incompatible with `agent-context`'s new structure. The user's example invocation explicitly passes `-TriggerProjectSetup $False` to bypass it. Needs to be replaced with a dispatch that invokes `/gh-issue-tracking-init` directly (no args — its defaults resolve to the current repo + seeded `plan_docs/`). |
+| **Trigger follow-up workflow (W1.5) — BROKEN** | When `-TriggerProjectSetup $True` (default), the script calls `trigger-project-setup.ps1` which creates an `orchestration:dispatch` issue invoking `/orchestrate-dynamic-workflow $workflow_name = project-setup`. **Problem:** this orchestrator was ported from a different template and is largely incompatible with `gap-miner-v2-papa26`'s new structure. The user's example invocation explicitly passes `-TriggerProjectSetup $False` to bypass it. Needs to be replaced with a dispatch that invokes `/gh-issue-tracking-init` directly (no args — its defaults resolve to the current repo + seeded `plan_docs/`). |
 
 **Verified against a real cloned instance**
 ([`intel-agency/gap-miner-v2-delta12`](https://github.com/intel-agency/gap-miner-v2-delta12),
@@ -267,7 +267,7 @@ but Class-2 material described in W1 steps 1–3 survives verbatim.
 - **W1 step 5 (build hierarchy) trigger is broken.** `-TriggerProjectSetup $True`
   dispatches `/orchestrate-dynamic-workflow $workflow_name = project-setup` — a
   project-setup orchestrator ported from a prior template that is largely
-  incompatible with `agent-context`'s new structure. The user already bypasses
+  incompatible with `gap-miner-v2-papa26`'s new structure. The user already bypasses
   this with `-TriggerProjectSetup $False`. Needs to be replaced with a dispatch
   that invokes `/gh-issue-tracking-init` directly (no args — its defaults
   resolve to the current repo + seeded `plan_docs/`, exactly the post-clone
@@ -290,7 +290,7 @@ but Class-2 material described in W1 steps 1–3 survives verbatim.
   to silently skip ("already updated"), so the cloned instance's AGENTS.md still
   claims "*this repository … is the upstream GitHub template*" — semantically
   wrong for a downstream instance. Generic name replacement did land
-  (`intel-agency/agent-context` → the clone name), but the role label was not
+  (`intel-agency/gap-miner-v2-papa26` → the clone name), but the role label was not
   flipped. Proposed fix: change anchor strategy to (a) template-authoritative —
   reword the template AGENTS.md first paragraph so a stable anchor literal is
   present — or (b) script-authoritative — update `$oldLabel` to match current
@@ -341,7 +341,7 @@ Add the following steps to `create-repo-with-plan-docs.ps1`:
 5. **W1.5 Replace hierarchy-init trigger** — `-TriggerProjectSetup $True`
    currently dispatches `/orchestrate-dynamic-workflow $workflow_name = project-setup`
    via `trigger-project-setup.ps1`. That orchestrator was ported from a prior
-   template and is incompatible with `agent-context`'s new structure (the user
+   template and is incompatible with `gap-miner-v2-papa26`'s new structure (the user
    already bypasses it with `-TriggerProjectSetup $False`). Replace the trigger
    body so the dispatch issue invokes `/gh-issue-tracking-init` directly (no
    args — its no-arg defaults resolve to the current repo + seeded `plan_docs/`).

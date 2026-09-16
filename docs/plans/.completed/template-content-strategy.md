@@ -3,7 +3,7 @@
 | | |
 | --- | --- |
 | **Plan** | Define how content in this template repo behaves when cloned into downstream app instances, and where the transfer/cleanup logic belongs |
-| **Target repo** | `intel-agency/agent-context` (a GitHub **template** repo) |
+| **Target repo** | `intel-agency/gap-miner-v2-papa26` (a GitHub **template** repo) |
 | **Status** | Active |
 | **Date** | 2026-07-18 |
 | **Related** | [`gh-issue-tracking-init`](../../.agents/skills/gh-issue-tracking-init/SKILL.md) skill (no-arg defaults); [`nam20485/workflow-launch2`](https://github.com/nam20485/workflow-launch2) creation scripts (`create-repo-with-plan-docs.ps1`, `trigger-project-setup.ps1`) — the external seeding pipeline; [`../workflow-launch2-clone-pipeline-class2-cleanup.md`](../workflow-launch2-clone-pipeline-class2-cleanup.md) — implementation plan for the new parallel-seeding scripts in `workflow-launch2` |
@@ -12,7 +12,7 @@
 
 ## Context
 
-`agent-context` is a **generic GitHub template repo**. It is not an application —
+`gap-miner-v2-papa26` is a **generic GitHub template repo**. It is not an application —
 it is the substrate. The intended lifecycle of an instance is:
 
 1. **Clone** the template into a new repo (GitHub "Use this template" copies all
@@ -65,9 +65,9 @@ Inherently project-specific. Must **not** be ported down, and must be **reset** 
 clone.
 
 - `.agents/memory.md` — Current Activity / Completed Work / Decisions describe
-  *agent-context's own* development, not the clone's app.
+  *gap-miner-v2-papa26's own* development, not the clone's app.
 - This repo's own `docs/plans/.completed/*` — e.g.
-  `agent-context-fix-plan.md`, `app-stacks-rules-plan.md`,
+  `gap-miner-v2-papa26-fix-plan.md`, `app-stacks-rules-plan.md`,
   `rules-scripts-and-legacy-migration.md` (plans about improving the template).
 - This repo's own `docs/plans/.deferred/*` — e.g. `defect-level-plan.md`.
 - **Foreign/contaminating artifacts** — downstream run reports that leaked up into
@@ -148,7 +148,7 @@ Typical invocation (the one we actually use):
 
 ```pwsh
 ./scripts/create-repo-from-slug.ps1 `
-  -Slug "gap-miner-v2" -TemplateRepoName "agent-context" `
+  -Slug "gap-miner-v2" -TemplateRepoName "gap-miner-v2-papa26" `
   -TriggerProjectSetup $False -Yes
 ```
 
@@ -156,7 +156,7 @@ Typical invocation (the one we actually use):
 
 | Step | Description |
 | --- | --- |
-| Create repo | `gh repo create --template intel-agency/agent-context` |
+| Create repo | `gh repo create --template intel-agency/gap-miner-v2-papa26` |
 | Poll readiness | `Wait-TemplateReady` polls commits endpoint until the template initial commit lands |
 | Provision secrets/vars | `GEMINI_API_KEY` (from env), `VERSION_PREFIX='0.0.1'` |
 | Clone locally | `git clone` to `../dynamic_workflows/<full-repo-name>` |
@@ -164,7 +164,7 @@ Typical invocation (the one we actually use):
 | **Name placeholder replace** | `Update-TemplatePlaceholders` replaces every occurrence of the template repo name and owner in file contents *and* filenames; asserts zero remaining matches |
 | **AGENTS.md semantic rewrite** | Targets `**GitHub template repo**` and replaces with `**project instance** cloned from ... template`. **Fixed 2026-07-19 (W1.4 option a):** the template AGENTS.md first sentence was reworded so the anchor now matches; apposition reads correctly in both template and clone contexts. |
 | Commit + push | Single seed commit; handles template-race rebase by re-running all of the above after `pull --rebase` |
-| **Trigger follow-up workflow (W1.5)** | When `-TriggerProjectSetup $True` (default), `trigger-project-setup.ps1` creates an `orchestration:dispatch` issue invoking `/orchestrate-dynamic-workflow $workflow_name = project-setup`. **Broken for agent-context clones** (the project-setup orchestrator is from a legacy template); bypassed by always passing `-TriggerProjectSetup $False`. Replacement: new `trigger-gh-issue-tracking-init.ps1` (parallel script, does not modify the existing one) dispatches `/gh-issue-tracking-init` directly. |
+| **Trigger follow-up workflow (W1.5)** | When `-TriggerProjectSetup $True` (default), `trigger-project-setup.ps1` creates an `orchestration:dispatch` issue invoking `/orchestrate-dynamic-workflow $workflow_name = project-setup`. **Broken for gap-miner-v2-papa26 clones** (the project-setup orchestrator is from a legacy template); bypassed by always passing `-TriggerProjectSetup $False`. Replacement: new `trigger-gh-issue-tracking-init.ps1` (parallel script, does not modify the existing one) dispatches `/gh-issue-tracking-init` directly. |
 
 **Verified against a real cloned instance**
 ([`intel-agency/gap-miner-v2-delta12`](https://github.com/intel-agency/gap-miner-v2-delta12),
@@ -181,7 +181,7 @@ placeholder replacement are working, but Class-2 material described in W1 steps
   directly (no args; its defaults resolve to the clone + seeded `plan_docs/`).
   The legacy `trigger-project-setup.ps1` is preserved and untouched for other
   templates that still use it. The orchestrator wrapper
-  `create-repo-agent-context.ps1` hard-codes `-SkipProjectSetup` on the legacy
+  `create-repo-gap-miner-v2-papa26.ps1` hard-codes `-SkipProjectSetup` on the legacy
   call and invokes the new trigger itself.
 - **W1 steps 1–3 (Class-2 cleanup) are implemented by a new parallel script** —
   `cleanup-template-state.ps1` runs after clone + placeholder replace and before

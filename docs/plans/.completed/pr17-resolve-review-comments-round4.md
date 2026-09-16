@@ -1,7 +1,7 @@
 # PR #17 Review Comment Resolution Plan — Round 4
 
 Date: 2026-08-18
-PR: [#17](https://github.com/intel-agency/agent-context/pull/17) — Refactor dry-run handling, update permissions, and clean up docs
+PR: [#17](https://github.com/intel-agency/gap-miner-v2-papa26/pull/17) — Refactor dry-run handling, update permissions, and clean up docs
 Head: `d4896e7` (branch `development`)
 Unresolved threads: 10
 
