@@ -1,7 +1,6 @@
 ---
 description: Provides rigorous code reviews covering correctness, security, performance, and documentation. Read-only — never edits code. Invoke when reviewing PRs, diffs, or proposed changes.
 mode: subagent
-model: zai-coding-plan/glm-5.3-flash
 color: accent
 temperature: 0.1
 permission:
@@ -10,17 +9,17 @@ permission:
   glob: allow
   grep: allow
   list: allow
-  external_directory: ask
-  todowrite: ask
+  external_directory: allow
+  todowrite: allow
   webfetch: allow          # CVE / security-advisory / best-practice lookups
   websearch: allow         # security & convention research
   lsp: allow               # find references / blast-radius tracing
-  skill: ask
+  skill: allow
   question: allow
   doom_loop: allow
   bash:
     # Read-only by intent: default ask, allow read/git/gh inspection, deny mutations.
-    "*": ask
+    "*": allow
     "git status*": allow
     "git diff*": allow
     "git log*": allow

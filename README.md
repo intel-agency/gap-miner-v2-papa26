@@ -1,4 +1,4 @@
-# agent-context
+# gap-miner-v2-papa26
 
 This repository is the GitHub **template repo** for `intel-agency`: the substrate from which
 each downstream instance is cloned to house a unique application plan and develop it. Any

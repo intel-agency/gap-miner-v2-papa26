@@ -1,14 +1,13 @@
 ---
 description: Defines test strategies, writes and executes validation suites, and enforces quality gates before release. Invoke for test authoring, regression coverage analysis, and running/fixing failing test suites.
 mode: subagent
-model: zai-coding-plan/glm-5.3-flash
 color: success
 temperature: 0.2
 permission:
   read: allow
   edit:
     # Default ask; auto-allow test files so QA can author/fix tests freely.
-    "*": ask
+    "*": allow
     "**/*Test*": allow
     "**/*test*": allow
     "**/*spec*": allow
@@ -22,12 +21,12 @@ permission:
   glob: allow
   grep: allow
   list: allow
-  external_directory: ask
+  external_directory: allow
   todowrite: allow
-  webfetch: ask
-  websearch: ask
+  webfetch: allow
+  websearch: allow
   lsp: allow
-  skill: ask
+  skill: allow
   question: allow
   doom_loop: allow
   bash:

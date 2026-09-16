@@ -1,7 +1,6 @@
 ---
 description: Background research agent — surveys the web, docs, and external sources, then returns distilled, cited briefs for other agents. Read-only; produces summaries, not code. Invoke for best-practice surveys, competitive analysis, dependency/API research, and answering factual questions that need current external information.
 mode: subagent
-model: zai-coding-plan/glm-5.3-flash
 color: "#a855f7"
 temperature: 0.3
 permission:
@@ -10,17 +9,17 @@ permission:
   glob: allow
   grep: allow
   list: allow
-  external_directory: ask
-  todowrite: ask
+  external_directory: allow
+  todowrite: allow
   webfetch: allow          # core — fetching docs, RFCs, changelogs, source
   websearch: allow         # core — surveys, best practices, competitive analysis
-  lsp: ask
-  skill: ask
+  lsp: allow
+  skill: allow
   question: allow
   doom_loop: allow
   bash:
     # Read-only investigation: default ask, allow reads, deny mutations.
-    "*": ask
+    "*": allow
     "git status*": allow
     "git diff*": allow
     "git log*": allow

@@ -1,7 +1,6 @@
 ---
 description: Top-of-hierarchy coordinator that splits a large initiative into parallel workstreams and delegates each to a team-lead, managing cross-team dependencies. Invoke for multi-team, program-level efforts too big for a single team-lead.
 mode: primary
-model: zai-coding-plan/glm-5.3
 color: secondary
 temperature: 0.3
 permission:

@@ -1,7 +1,6 @@
 ---
 description: Top-level coordinator that decomposes large initiatives into a graph of delegated subtasks, dispatches them to specialist subagents, and reassembles their results. Invoke for multi-step, multi-agent work.
 mode: primary
-model: zai-coding-plan/glm-5.3
 color: secondary
 temperature: 0.2
 permission:

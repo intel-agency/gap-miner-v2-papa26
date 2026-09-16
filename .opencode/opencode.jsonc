@@ -5,15 +5,7 @@
     "AGENTS.md"
   ],
   "default_agent": "orchestrator",
-  "model": "zai-coding-plan/glm-5.3",
-  "small_model": "zai-coding-plan/glm-5.3-flash",
-  "permission": {
-    "websearch": "allow",
-    "zread": "allow",
-    "web-reader": "allow",
-    "exa": "allow",
-    "web-search-prime": "allow"
-  },
+  "permission": "allow",
   "mcp": {
     "web-reader": {
       "type": "remote",
